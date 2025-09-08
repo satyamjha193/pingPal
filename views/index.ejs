@@ -1,0 +1,80 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PingPal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="icon" href="/images/Logo.png" type="image/png" sizes="32x32">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <link rel="apple-touch-icon" href="/images/Logo.png"> <!-- for iOS -->
+</head>
+<body>
+  <div class="hero-container">
+    <video autoplay muted loop playsinline class="bg-video">
+      <source src="/images/aa130dce-bc67-46c6-a6ae-1906245136ef.mp4" type="video/mp4" />
+    </video>
+
+    <div class="overlay">
+      <header class="navbar">
+        <div class="logo">
+          <img src="/images/Logo.png" alt="PingPal Logo">
+        </div>
+
+        <div class="nav-links">
+          <a href="/">Home</a>
+          <a href="/features">Features</a>
+        </div>
+
+       <div class="auth-buttons">
+        <a href="/random-chatRoom" class="signup">Random Chat</a>
+        <a href="/login?form=login" class="login">Login</a>
+        <a href="/login?form=signup" class="signup">Sign Up</a>
+      </div>
+
+
+        <i class="fas fa-bars" id="menu-icon" onclick="toggleSidebar()"></i>
+      </header>
+
+
+      <div class="hero-text">
+        <h1 data-aos="zoom-in" data-aos-delay="100">Introducing PingPal</h1>
+        <p class="tagline" data-aos="zoom-in" data-aos-delay="200">Where Conversations Spark Joy ✨</p>
+        <p class="subtext" data-aos="zoom-in" data-aos-delay="300">Stay Connected, Stay Happy 💬</p>
+      </div>
+
+      <!-- Mobile Slide Menu -->
+      <div class="mobile-menu" id="mobileMenu">
+        <i class="fas fa-times mobile-close" onclick="toggleSidebar()"></i>
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/login?form=login" class="login">Login</a>
+        <a href="/login?form=signup" class="signup">Sign Up</a>
+        <a href="/random-chatRoom" class="signup">Random Chat</a>
+
+      </div>
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 800, once: true, offset: 100 });
+</script>
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('mobileMenu'); // Correct ID
+    const menuIcon = document.getElementById('menu-icon');
+    
+    sidebar.classList.toggle('active');
+
+    if (sidebar.classList.contains('active')) {
+      menuIcon.style.display = 'none';
+    } else {
+      menuIcon.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>

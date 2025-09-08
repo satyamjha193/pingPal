@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PingPal Secure Features</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a0a0a;
+      color: white;
+    }
+
+    .gradient-section {
+      background: linear-gradient(to bottom, #4a154b 0%, #0a0a0a 100%);
+      padding: 80px 20px 60px;
+      text-align: center;
+    }
+
+    .gradient-section h2 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .gradient-section h2 .highlight {
+      color: #b085ff;
+    }
+
+    .gradient-section p {
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 600px;
+      margin: 0 auto 50px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .features-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 25px;
+      width: 100%;
+      max-width: 320px;
+      text-align: left;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: #b085ff;
+      box-shadow: 0 4px 10px rgba(176, 133, 255, 0.2);
+    }
+
+    .feature-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+
+    .feature-card p {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .gradient-section h2 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .features-grid {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 10px;
+      }
+
+      .feature-card {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+   
+    .hero {
+  display: flex;
+  justify-content: center;   /* center left↔right */
+  align-items: center;       /* center top↕bottom */
+  min-height: 100vh;         /* take full screen height */
+  padding: 60px 8%;
+  text-align: center;        /* center text inside */
+}
+
+.hero-text {
+  max-width: 600px;
+}
+
+
+    .hero-text h1 {
+      font-size: 3rem;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .hero-text p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 30px;
+      color: #ddd;
+    }
+
+    .hero-text button {
+      padding: 12px 30px;
+      background-color: transparent;
+      color: #ffffff;
+      font-weight: 600;
+      border: 1px solid grey;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .hero-text button:hover {
+      background-color:white;
+      color: #0a0a0a;
+    }
+
+    .hero-image {
+      flex: 1;
+      text-align: center;
+    }
+
+    .hero-image img {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 6%;
+      }
+
+      .hero-text h1 {
+        font-size: 2.2rem;
+      }
+
+      .hero-text p {
+        font-size: 1rem;
+      }
+
+      .hero-image img {
+        margin-top: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="gradient-section">
+    <h2>Your <span class="highlight">conversations</span>, encrypted & secure</h2>
+    <p>
+      With PingPal, your chats and data are end-to-end encrypted by default — whether you’re sending a message,
+      sharing a file, or connecting across devices.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>🤳Hold "C" to POP messages</h3>
+        <p>Clear chats temporarily by simply shaking your phone or drawing the letter "C".</p>
+      </div>
+      <div class="feature-card">
+        <h3>👻 Whisper Mode</h3>
+        <p>Chats disappear automatically after they’ve been seen — perfect for private moments.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🤖 AI Suggestions</h3>
+        <p>Get intelligent text suggestions in real-time, tailored to your conversation.</p>
+      </div>
+    </div>
+
+  </section>
+
+   <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>About PingPal</h1>
+      <p>
+        PingPal connects people through seamless, real-time communication. Whether it's friends, teams, or communities, our platform is designed to make chatting smart, fast, and fun.
+      </p>
+      <button><a href="/login" style="color: white;text-decoration:none;">Explore Features</a></button>
+    </div>
+  </section>
+
+</body>
+</html>

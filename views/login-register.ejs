@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/login-register.css">
+    <title>PingPal Login/Register</title>
+</head>
+<body>
+    <div class="container" id="container">
+
+        <div class="form-container sign-up">
+            <form id="signUpForm" method="post" action="/register">
+                <h1>Create Account</h1>
+               <div class="social-icons social-trigger">
+    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+</div>
+                <span>or use your email for registeration</span>
+                <input type="email" placeholder="Email"  name="email"  required>
+                <input type="text" placeholder="Username" name="username"  required>
+                <input type="password" placeholder="Password" name="password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+
+
+
+        <!-- Overlay Section  for not available social icons-->
+<div id="socialOverlay" class="social-overlay">
+    <div class="overlay-box">
+        <i class="fas fa-times overlay-close" id="overlayClose"></i>
+        <p>This feature is not implemented. Please try using Email and Password.</p>
+    </div>
+</div>
+
+
+<!-- login form -->
+        <div class="form-container sign-in">
+            <form id="signInForm" method="POST" action="/auth/login">
+                <h1>Sign In</h1>
+               <div class="social-icons social-trigger">
+    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+</div>
+                <span>or use your email password</span>
+                 <% if (error_msg) { %>
+                    <div class="alert alert-danger" style="color: red;"><%= error_msg %></div>
+                <% } %>
+                <input type="text" placeholder="Username" name="username" required>
+                <input type="password" placeholder="Password" name="password" required>
+                <a href="#">Forget Your Password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+
+        
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                     <h1>Welcome To PingPal</h1>
+                     <p>Create your PingPal account to connect, chat, and explore all our powerful features.</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                     <h1>Hello, Explorer!</h1>
+                     <p>Join the PingPal community and experience seamless communication, instantly.</p>   
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        
+    <!-- OTP Section -->
+
+      <div class="form-container otp-form">
+        <form id="otpForm" class="otp-form">
+            <h1>Verify OTP</h1>
+            <p class="otp-text">Enter the 6-digit OTP sent to your email/phone</p>
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" class="otp-box" />
+                <input type="text" maxlength="1" class="otp-box" />
+                <input type="text" maxlength="1" class="otp-box" />
+                <input type="text" maxlength="1" class="otp-box" />
+                <input type="text" maxlength="1" class="otp-box" />
+                <input type="text" maxlength="1" class="otp-box" />
+            </div>
+            <button type="submit">Verify</button>
+            <a href="#" id="resendOtp">Resend OTP</a>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- 🔄 Loader Spinner -->
+    <div id="loader" class="loader-container">
+      <div class="spinner"></div>
+    </div>
+
+    <script src="/js/login-register.js"></script>
+</body>
+
+</html>

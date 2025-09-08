@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <meta name="description" content="Modern chat application with dark and light themes">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Your Styles -->
+  <link rel="stylesheet" href="/css/chat.css">
+</head>
+<body class="dark">
+
+<div class="chat-container">
+
+    
+   <!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <!-- Header -->
+  <div class="sidebar-header">
+    <div class="sidebar-title-row">
+      <h1 class="sidebar-title">Chats</h1>
+      <div class="header-actions">
+        <button class="theme-toggle" onclick="toggleTheme()" style="font-size: 20px;">
+          <i class="fas fa-sun icon sun-icon" style="display: none;"></i>
+          <i class="fas fa-moon icon moon-icon"></i>
+        </button>
+        <div class="icon-wrapper">
+          <i class="fas fa-users icon" id="openSearch"></i>
+          <span class="tooltip-box">Pingpal Users</span>
+        </div>
+        <div class="icon-wrapper">
+    <a href="/random-chatRoom" class="signup">
+        <i class="fas fa-random icon"></i>
+        <span class="tooltip-box">Random Chat</span>
+    </a>
+</div>
+      </div> 
+    </div>
+    
+    <!-- Search -->
+    <div class="search-container">
+  <svg class="search-icon icon">
+    <circle cx="11" cy="11" r="8"></circle>
+    <path d="M21 21l-4.35-4.35"></path>
+  </svg>
+  <input type="text" class="search-input" id="userSearch" placeholder="Search messages or users">
+</div>
+
+  </div>
+
+
+  <%
+  const colors = [
+    "#1abc9c", "#3498db", "#9b59b6",
+    "#e67e22", "#e74c3c", "#2ecc71",
+    "#f39c12", "#16a085", "#2980b9"
+  ];
+
+  function getColor(username) {
+    const index = username.charCodeAt(0) % colors.length;
+    return colors[index];
+  }
+%>
+
+<!-- Top Contacts -->
+<div class="top-contacts">
+  <h2 class="recent-title">Top Chats</h2>
+  <div class="chat-list">
+    <% users.forEach(chat => { %>
+      <div class="chat-item" onclick="selectChat('<%= chat._id %>')">
+        <div class="chat-avatar" 
+             style="background-color: <%= chat.avatar ? 'transparent' : getColor(chat.username) %>;">
+          <% if (chat.avatar) { %>
+            <img src="<%= chat.avatar %>" alt="<%= chat.username %>" class="avatar-img" />
+          <% } else { %>
+            <%= chat.username.charAt(0).toUpperCase() %>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+
+
+
+<!-- Recent Chats -->
+<div class="recent-chats">
+  <h2 class="recent-title">PingPal Users</h2>
+  <div class="chat-list">
+    <% users.forEach(user => { %>
+      <div class="chat-item" onclick="selectChat('<%= user._id %>')">
+        <div class="chat-avatar" 
+             style="background-color: <%= user.avatar ? 'transparent' : getColor(user.username) %>;">
+          <% if (user.avatar) { %>
+            <img src="<%= user.avatar %>" alt="<%= user.username %>" class="avatar-img" />
+          <% } else { %>
+            <%= user.username.charAt(0).toUpperCase() %>
+          <% } %>
+        </div>
+        <div class="chat-info">
+          <div class="chat-header-row">
+            <div class="chat-name"><%= user.username %></div>
+          </div>
+          <div class="chat-preview-row">
+            <%= user.bio ? user.bio.substring(0, 10) : '' %>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+
+
+
+
+           <!-- Profile Toggle Button -->
+  <div class="profile-toggle" id="profileToggle">
+      <% if (user.avatar) { %>
+      <img src="<%= user.avatar %>" alt="User Avatar" id="profileBtn" class="avatar-img">
+      <% } else { %>
+      <div class="avatar-placeholder" id="profileBtn">
+        <%= user.username.charAt(0).toUpperCase() %>
+      </div>
+      <% } %>
+
+  <div class="details">
+    <h4><%= user.username %> <span>(YOU)</span></h4>
+    <p><%= user.email %></p>
+  </div>
+</div>
+    
+</div>
+<!-- end sidebar -->
+
+ <!-- Profile Sidebar (Bottom Sheet) -->
+  <div class="profile-sidebar" id="profileSidebar">
+        <button class="close-btn" id="closeProfile">&times;</button>
+        <div class="align-profilecard">
+        <div class="profile-card">
+            <div class="avtar-header">
+              <div class="avatar">
+              <img src="<%= user.avatar || 'https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg' %>" alt="User Avatar">
+
+            </div>
+            </div>
+            <div class="profile-info" >
+            <h3><%= user.username %></h3>
+            <p><%= user.email %></p>
+            <p class="about"><%= user.bio || 'PingPal User' %></p>
+
+
+            <div class="logout-editprof-btns">
+              <button id="editProfileButton">Edit Profile</button>
+              <form action="/auth/logout" method="GET" style="display:inline;">
+                <button type="submit" id="logoutButton" class="logout-btn">Logout</button>
+              </form>
+            </div>
+            </div>
+
+        <div class="profile-stats">
+  <p>
+    <span>Joined:</span>
+    <%= user.createdAt 
+          ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
+          : 'Unknown' %>
+  </p>
+
+  <p>
+    <span>Connections:</span>
+    <%= user.connections != null 
+          ? user.connections 
+          : Math.floor(Math.random() * 100000) + 1 %>
+  </p>
+
+  <p>
+    <span>Score:</span>
+    <%= user.score != null 
+          ? user.score 
+          : Math.floor(Math.random() * 1000000) + 1 %>
+  </p>
+
+  <p>
+    <span>Status:</span> 
+    <span class="status <%= user.isOnline ? 'online' : 'offline' %>">
+      <%= user.isOnline ? 'Online' : 'Online' %>
+    </span>
+  </p>
+</div>
+
+
+
+
+        </div>
+        </div>
+  </div>
+
+
+        <!-- Logout Confirmation Modal -->
+<div class="logout-modal" id="logoutModal">
+  <div class="logout-modal-content">
+    <p>Are you sure you want to logout?</p>
+    <div class="logout-modal-actions">
+      <button id="cancelLogout" class="cancel-btn">Cancel</button>
+      <button id="confirmLogout" class="confirm-btn">Yes, Logout</button>
+    </div>
+  </div>
+</div>
+
+   
+
+<!-- Fullscreen Edit Profile Section -->
+<div class="edit-profile-overlay" id="editProfileOverlay">
+  <div class="edit-profile-container">
+    <button class="close-edit-btn" id="closeEditProfile">&times;</button>
+    
+    <h2>Edit Profile</h2>
+    
+    <form 
+      class="edit-profile-form" 
+      action="/edit-profile" 
+      method="POST" 
+      enctype="multipart/form-data"
+    >
+      <!-- Avatar Upload -->
+      <div class="edit-avatar">
+        <img id="editAvatarPreview" src="<%= user.avatar || '/images/default-avatar.png' %>" alt="User Avatar">
+        <label for="avatarUpload" class="upload-btn">Change Image</label>
+        <input type="file" id="avatarUpload" name="avatar" accept="image/*" hidden>
+      </div>
+
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" value="<%= user.username %>" required>
+      </div>
+
+      <!-- About -->
+      <div class="form-group">
+        <label for="about">About</label>
+        <textarea name="bio" id="about" rows="3"><%= user.bio || 'PingPal User' %></textarea>
+      </div>
+
+      <!-- Save Button -->
+      <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+
+
+        
+
+    <!-- Chat Main Area -->
+    <div class="chat-main" id="chatBox">
+
+      <!-- Options Sidebox -->
+<div class="chat-options-panel" id="chatOptionsPanel">
+  <div class="options-header">
+    <h3>Chat Options</h3>
+    <button id="closeOptions" class="close-btn">&times;</button>
+  </div>
+  <ul class="options-list">
+    <li><button class="option-btn">👤 View Profile</button></li>
+    <li><button class="option-btn">🤝 Make Friend</button></li>
+    <li><button class="option-btn danger" id="blockUnblockBtn">🚫 Block User</button></li>
+    <li><button class="option-btn" id="deleteAllBtn" >💥Pop Messages</button></li>
+  </ul>
+</div>
+
+
+<!-- Block user model -->
+  <div class="modal-overlay" id="blockModal">
+  <div class="modal">
+    <h3 id="blockModalTitle">Block User?</h3>
+    <p id="blockModalText">Are you sure you want to block this user? They will not be able to message you.</p>
+    <div class="modal-actions">
+      <button id="cancelBlock">Cancel</button>
+      <button id="confirmBlock" class="danger">Ok</button>
+    </div>
+  </div>
+</div>
+
+   
+
+<!-- Chat Header -->
+<div class="chat-header">
+  <div class="chat-contact-info">
+    <button class="back-btn mobile-only" onclick="goBackToSidebar()">
+      <svg class="icon">
+        <path d="M19 12H5M12 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+
+    <% if (activeChat && activeChat.avatar) { %>
+      <div class="chat-avatar">
+        <img 
+          src="<%= activeChat.avatar %>" 
+          alt="<%= activeChat.username %>" 
+          class="avatar-img"
+          style="height: 50px; width:50px; border-radius:50%;">
+      </div>
+    <% } else if (activeChat) { %>
+      <div class="chat-avatar" >
+        <%= activeChat.username.charAt(0).toUpperCase() %>
+      </div>
+    <% } else { %>
+      <div class="chat-avatar" 
+           style="background-color:#7f8c8d; height:50px; width:50px; border-radius:50%;">
+        <!-- Empty if no chat selected -->
+      </div>
+    <% } %>
+
+    <div class="contact-details">
+      <h2>
+        <% if (activeChat) { %>
+          <%= activeChat.username %>
+        <% } else { %>
+          Select chats
+        <% } %>
+      </h2>
+    </div>
+  </div>
+
+  <div class="chat-actions">
+    <button class="icon-btn ellipsis-btn" aria-label="More options" id="moreBtn">
+      <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
+
+
+
+
+
+<!-- Messages -->
+<div class="messages-area" id="messages">
+  
+  <% if (messages && messages.length > 0) { %>
+    <% messages.forEach(msg => { %>
+      <div class="message <%= msg.sender.toString() === user._id.toString() ? 'sent' : 'received' %>">
+        <p><%= msg.text %></p>
+        <small><%= msg.createdAt.toLocaleString() %></small>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div style="display: flex;flex-direction:column;gap:10%; align-items:center;margin-top:10%;">
+      <p class="no-messages" style=" font-weight:600;font-size:30px;">No messages yet! <strong>SELECT A CHAT</strong> to send message</p>
+      <img  style="width:fit-content;height:25%;" src="https://static.vecteezy.com/system/resources/previews/007/475/704/non_2x/icon-emoticon-not-talking-suitable-for-emoticon-symbol-glyph-style-simple-design-editable-design-template-simple-symbol-illustration-vector.jpg" alt="">
+    </div>
+  <% } %>
+</div>
+
+<div id="typingIndicator" style="display: none; font-style: italic; color:var(--text-color); margin-left: 10px;padding: 3px;">
+  Typing...
+</div>
+
+<!-- Always render message input -->
+<div class="message-input-area">
+  <form id="chat-form" action="/chat/send" class="message-input-container">
+    <input type="hidden" name="chatId" id="chatIdInput" value="">
+    <div class="input-wrapper">
+      <input type="text" class="message-input" placeholder="Enter Message..." id="messageInput" disabled>
+    </div>
+    <button class="send-btn" id="sendBtn" disabled>
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </form>
+</div>
+
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- search overlay where the user requests and pingpal users appear! -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-header">
+  <button id="closeSearch" class="back-btn">
+    <i class="fas fa-arrow-left" id="back-to-chat-btn"></i>
+  </button> 
+  <h2>PingPal Users</h2>
+</div>
+
+  <br>
+
+  <!-- Two column layout -->
+  <div class="users-columns">
+    <!-- Message Requests -->
+    <div class="users-section">
+  <h3 class="section-title">Friend Requests you Got</h3>
+  <div class="users-list">
+
+    <!-- Dummy Request Card -->
+    <div class="user-card dummy-card">
+      <div class="user-info">
+        <div class="avatar-search-section"
+         style="background:#9ca3af; /* gray */ 
+                height:40px; width:40px; border-radius:50%;
+                display:flex; align-items:center; justify-content:center;
+                color:#fff; font-weight:bold; font-size:16px;">
+          ?
+        </div>
+        <div class="user-details">
+          <div class="user-name">Dummy User</div>
+          <div class="user-status" style="font-size:12px; color:#6b7280;">This request is processing...</div>
+        </div>
+      </div>
+      <div class="confirm-button">
+        <button class="accept-btn" disabled style="opacity:0.6; cursor:not-allowed;">Accept</button>
+        <i class="far fa-times-circle cancel-icon" style="opacity:0.6; cursor:not-allowed;"></i>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+    <!-- Pingpal Users -->
+    <div class="users-section">
+  <h3 class="section-title">Pingpal Users You May Know..</h3>
+  <br>
+  <div class="search-container overlay-search">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" id="search-pingpalusers" class="search-input user-search" placeholder="Search users...">
+  </div>
+  <br><br>
+  <div class="users-list">
+  <% users.forEach(user => { %>
+    <div class="user-card">
+      <div class="user-info">
+        <% if (user.avatar) { %>
+          <div class="avatar-search-section">
+            <img 
+              src="<%= user.avatar %>" 
+              alt="<%= user.username %>" 
+              class="avatar-img open-user-profile" 
+              style="height:40px; width:40px; border-radius:50%;"
+              data-user='<%- JSON.stringify(user) %>'
+            >
+          </div>
+        <% } else { %>
+          <div 
+            class="avatar-search-section open-user-profile" 
+            style="background:<%= getColor(user.username) %>; 
+                   height:40px; width:40px; border-radius:50%;
+                   display:flex; align-items:center; justify-content:center; 
+                   color:#fff; font-weight:bold; font-size:18px;"
+            data-user='<%- JSON.stringify(user) %>'
+          >
+            <%= user.username.charAt(0).toUpperCase() %>
+          </div>
+        <% } %>
+        <div class="user-name"><%= user.username %></div>
+      </div>
+      <button class="connect">Connect</button>
+    </div>
+  <% }) %>
+</div>
+
+</div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- View Other User Profile Overlay -->
+<div class="edit-profile-overlay" id="viewProfileOverlay">
+  <div class="edit-profile-container">
+    <button class="close-edit-btn" id="closeViewProfile">&times;</button>
+
+    <div class="avtar-header">
+      <div class="avatar">
+        <img src="" alt="User Avatar" id="viewProfileAvatar">
+      </div>
+    </div>
+<!-- details are being handled by js instead of ejs -->
+    <div class="profile-info">
+      <h3 id="viewProfileUsername">Username</h3>
+      <p id="viewProfileEmail">user@example.com</p>
+      <p class="about" id="viewProfileBio">User bio goes here</p>
+    </div>
+
+    <div class="profile-stats">
+      <p><span>Joined:</span> <span id="viewProfileJoined">-</span></p>
+      <p><span>Connections:</span> <span id="viewProfileConnections">-</span></p>
+      <p><span>Score:</span> <span id="viewProfileScore">-</span></p>
+      <p><span>Status:</span> <span id="viewProfileStatus" class="status offline">Offline</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+    window.currentUserId = "<%= user._id %>";
+</script>
+
+
+
+  <!-- Script -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/gesture.js"></script>
+  
+
+</body>
+
+</html>
+
