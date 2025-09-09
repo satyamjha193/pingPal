@@ -4,8 +4,8 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const mongoose = require('mongoose');
+// const MongoStore = require('connect-mongo');
+// const mongoose = require('mongoose');
 const flash = require("connect-flash");
 const { ensureAuth, validateSession } = require('./middleware/ensureAuth');
 
@@ -18,8 +18,8 @@ const io = socketIO(server);
 
 
 // MongoDB
-mongoose.connect(process.env.MONGO_URI, {})
-.then(() => console.log('✅ MongoDB connected'));
+// mongoose.connect(process.env.MONGO_URI, {})
+// .then(() => console.log('✅ MongoDB connected'));
 
 // Session
 // MongoDB
