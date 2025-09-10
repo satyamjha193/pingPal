@@ -18,29 +18,29 @@ const io = socketIO(server);
 
 
 // MongoDB
-// mongoose.connect(process.env.MONGO_URI, {})
-// .then(() => console.log('✅ MongoDB connected'));
+mongoose.connect(process.env.MONGO_URI, {})
+.then(() => console.log('✅ MongoDB connected'));
+
+Session
+MongoDB
+mongoose.connect(process.env.MONGO_URI, {})
+.then(() => console.log('✅ MongoDB connected'));
 
 // Session
-// MongoDB
-// mongoose.connect(process.env.MONGO_URI, {})
-// .then(() => console.log('✅ MongoDB connected'));
-
-// // Session
-// app.use(session({
-//   secret: process.env.SESSION_SECRET,
-//   resave: false,
-//   saveUninitialized: false,
-//   store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-//   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
-// }));
-
-
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
+
+
+// app.use(session({
+//   secret: process.env.SESSION_SECRET,
+//   resave: false,
+//   saveUninitialized: false
+// }));
 
 
 
