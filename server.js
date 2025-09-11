@@ -21,10 +21,6 @@ const io = socketIO(server);
 mongoose.connect(process.env.MONGO_URI, {})
 .then(() => console.log('✅ MongoDB connected'));
 
-Session
-MongoDB
-mongoose.connect(process.env.MONGO_URI, {})
-.then(() => console.log('✅ MongoDB connected'));
 
 // Session
 app.use(session({
