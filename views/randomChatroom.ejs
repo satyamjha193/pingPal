@@ -16,7 +16,7 @@
       Join available rooms instantly or wait for your turn in popular discussions.
     </p>
 
-       <div class="avatar-note">
+       <div class="avatar-note" data-aos="zoom-in" data-aos-delay="300">
   <p>🎭 Avatars are assigned <strong>randomly</strong> as boy or girl. 
      No need to select anything!</p>
 </div>
@@ -31,12 +31,16 @@
   <div class="overlay" id="overlay">
   <button class="close-btn" id="closeOverlay">&times;</button>
   <h2>Select a Room</h2>
+  <br>
+  <p>Please wait if the rooms are occupied. You will have your turn shortly.</p>
+
   <div class="rooms">
     <% for(let i=1; i<=3; i++) { %>
       <div class="room-card">
         <h3>Room <%= i %></h3>
-        <p class="status"><%= rooms[i] && rooms[i].length >= 10 ? 'Occupied' : 'Vacant' %></p>
-        <button class="join-btn" <%= rooms[i] && rooms[i].length >= 10 ? 'disabled' : '' %>>Join Room</button>
+        <% const status = rooms[i] && rooms[i].size >= 10 ? 'Occupied' : 'Vacant'; %>
+        <p class="status <%= status %>"><%= status %></p>
+        <button class="join-btn" <%= rooms[i] && rooms[i].size >= 10 ? 'disabled' : '' %>>Join Room</button>
       </div>
     <% } %>
   </div>
@@ -85,57 +89,13 @@
 </div>
 
 
- 
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ duration: 800, once: true, offset: 100 });
 </script>
+<script src="/js/randomChatroom.js"></script>
 
-
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const joinButtons = document.querySelectorAll(".join-btn");
-const overlay = document.getElementById("overlay");
-const closeOverlay = document.getElementById("closeOverlay");
-
-// Show overlay
-document.querySelector(".btn-get_started").addEventListener("click", () => overlay.classList.add("active"));
-closeOverlay.addEventListener("click", () => overlay.classList.remove("active"));
-
-// Join room directly (no username input)
-joinButtons.forEach((btn, index) => {
-  btn.addEventListener("click", async () => {
-    if (!btn.disabled) {
-      // Call backend to set session room
-      await fetch(`/room/${index+1}`); // hit the backend to store session
-      window.location.href = `/room`;
-    }
-  });
-});
-
-
-
-
-
- const learnMoreBtn = document.getElementById("learnMoreBtn");
-  const learnMoreOverlay = document.getElementById("learnMoreOverlay");
-  const learnMoreClose = document.getElementById("learnMoreClose");
-
-  learnMoreBtn.addEventListener("click", () => {
-    learnMoreOverlay.classList.add("active");
-  });
-
-  learnMoreClose.addEventListener("click", () => {
-    learnMoreOverlay.classList.remove("active");
-  });
-
-  // Close if clicked outside content
-  learnMoreOverlay.addEventListener("click", (e) => {
-    if (e.target === learnMoreOverlay) {
-      learnMoreOverlay.classList.remove("active");
-    }
-  });
-</script>
 
 
 

@@ -437,7 +437,9 @@
         flex: 0 0 auto; /* don't shrink, stay fixed */
         text-align: center;
       }
-
+      #userdp-avatar{
+        cursor: pointer;
+      }
         
         .message {
             max-width: 320px;
@@ -672,6 +674,7 @@
   z-index: 999;           /* above everything */
   padding: 20px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* When active, make it visible */
@@ -679,11 +682,24 @@
   display: flex;
 }
 .search-header {
+  position: sticky;       /* stick to top */
+  top: 0;
+  left: 0;
+  width: 100%;
   display: flex;
-  align-items: center;   /* vertical alignment */
-  gap: 10px;             /* space between icon & text */
+  align-items: center;
+  gap: 10px;
   padding: 10px;
+  z-index: 1000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
+
+/* Hidden state */
+.search-header.hide {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
 
 .search-header .back-btn {
   background: none;
@@ -706,7 +722,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   flex: 1;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .users-section {
@@ -720,7 +736,7 @@
 
 .users-list {
   max-height: 300px;       /* set your scrollable height */
-  overflow-y: auto;        /* enable vertical scroll */
+  overflow-y: visible;        /* enable vertical scroll */
   scrollbar-width: none;   /* Firefox */
   -ms-overflow-style: none;/* IE/Edge */
 }
@@ -864,22 +880,6 @@
   background: var(--chat-text-muted);
   cursor: default;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1603,4 +1603,103 @@ h2 {
 .modal-actions .danger {
   background: #e74c3c;
   color: #fff;
+}
+
+
+
+
+
+
+/* ====== Leaderboard Styles ====== */
+.leaderboard-container {
+  max-width: 650px;
+  margin: 50px auto;
+  border-radius: 16px;
+  background-color: var(--user-profile-chats-card);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  transition: all 0.3s ease;
+  overflow: visible; /* allow page scroll */
+  padding-bottom: 10px;
+}
+
+/* Header */
+.leaderboard-container h2 {
+  margin: 0;
+  padding: 20px;
+  font-size: 1.6rem;
+  background-color: var(--profile-header-bg);
+  color: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+/* Leaderboard list */
+#leaderboard {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;  /* Firefox */
+  scrollbar-color: var(--chat-border) transparent;
+}
+
+/* Scrollbar styling for Webkit */
+#leaderboard::-webkit-scrollbar {
+  width: 8px;
+}
+#leaderboard::-webkit-scrollbar-thumb {
+  background-color: var(--chat-border);
+  border-radius: 4px;
+}
+#leaderboard::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Leaderboard items */
+#leaderboard li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  font-size: 16px;
+  border-bottom: 1px solid var(--chat-border);
+  color: var(--text-color);
+  transition: background 0.3s, transform 0.2s;
+  cursor: pointer;
+}
+
+#leaderboard li:hover {
+  background-color: var(--chat-sidebar-hover);
+  transform: translateX(4px);
+}
+
+/* Top scorer highlight */
+#leaderboard li:first-child {
+  font-weight: bold;
+  background: linear-gradient(90deg, var(--chat-message-sent), #ffb347);
+  color: #fff;
+}
+
+/* Optional: rank badges */
+#leaderboard li .rank {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  margin-right: 12px;
+  border-radius: 50%;
+  background-color: var(--chat-message-sent);
+  color: #fff;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* Smooth theme transition for all children */
+.leaderboard-container,
+#leaderboard li,
+#leaderboard li .rank {
+  transition: all 0.3s ease;
 }

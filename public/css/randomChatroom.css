@@ -94,7 +94,7 @@
       left: 0;
       height: 100%;
       width: 100%;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,10);
       display: none;
       flex-direction: column;
       justify-content: center;
@@ -137,11 +137,11 @@
       font-weight: bold;
     }
 
-    .vacant {
+    .Vacant {
       color: #16a34a;
     }
 
-    .occupied {
+    .Occupied {
       color: #dc2626;
     }
 
@@ -218,19 +218,19 @@
       cursor: pointer;
     }
     .learnmore-close{
-       position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.1); /* semi-transparent */
-  backdrop-filter: blur(10px);          /* blur effect */
-  -webkit-backdrop-filter: blur(10px);  /* Safari support */
-  border: none;
-  color: #ffffff;
-  font-size: 24px;
-  cursor: pointer;
-  border-radius: 8px;                   /* optional, for rounded look */
-  padding: 2px 10px;     
-    }
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1); /* semi-transparent */
+      backdrop-filter: blur(10px);          /* blur effect */
+      -webkit-backdrop-filter: blur(10px);  /* Safari support */
+      border: none;
+      color: #ffffff;
+      font-size: 24px;
+      cursor: pointer;
+      border-radius: 8px;                   /* optional, for rounded look */
+      padding: 2px 10px;     
+      }
 
     /* Responsive */
     @media (max-width: 768px) {

@@ -6,189 +6,212 @@
   <title>Room <%= room %> - PingPal</title>
   <link rel="icon" href="/images/Logo.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="/images/Logo.png"> <!-- for iOS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <link rel="stylesheet" href="/css/chatRoom.css">
   <style>
+    /* Add any inline styles here if necessary */
   </style>
 </head>
 <body class="dark">
+
+  <!-- Notification sound for user join -->
   <audio id="userJoinSound" src="/images/iphone notification tone.mp3" preload="auto"></audio>
 
   <!-- Header -->
   <div class="chat-header">
 
-        <!-- Floating username box -->
-    <div id="myUsernameBadge" class="username-badge">
-      <i class="fas fa-user"></i><%= username %> (you)
-    </div>
-
-
+  
+    <!-- Room number and online users -->
     <div class="room-number">
-      <h2 style="color: var( --text-color);">ROOM-<%= room %></h2>
+      <h2 style="color: var(--text-color);">ROOM-<%= room %></h2>
       <small id="usersOnline" style="color: rgb(20, 124, 20); font-weight:700;">0 users online</small>
     </div>
-    <button class="theme-toggle"><i class="fas fa-sun"></i> </button>
+
+
+    <div class="icons-container">
+      <!-- Floating username badge as an icon with hover tooltip -->
+      <div class="username-badge" id="myUsernameBadge">
+        <i class="fa-solid fa-user-tag"></i>
+        <span class="tooltip"><%= username %> (you)</span>
+      </div>
+
+      <!-- Theme toggle button -->
+      <button class="theme-toggle"><i class="fas fa-sun"></i></button>
+    </div>
   </div>
 
-  <!-- real topic  -->
-   <div class="realTopic_suggestion">HOT _ Topics</div>
+  <!-- Hot Topics / Real Topic -->
+  <div class="realTopic_suggestion">HOT _ Topics</div>
 
   <!-- Chat body -->
   <div class="chat-body" id="chatBody">
-    <!-- messages are appended by sockets dynamically! -->
+    <!-- Messages are appended here dynamically via sockets -->
   </div>
 
-  <!-- Footer -->
+  <!-- Chat footer -->
   <div class="chat-footer">
     <input id="msgInput" type="text" placeholder="Type your message...">
     <button id="sendBtn">➤</button>
   </div>
 
-  
- <script src="/socket.io/socket.io.js"></script>
-<script>
+  <!-- Socket.IO -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // User avatar
+    const myAvatar = "<%= avatar ? avatar : '' %>";  // empty if no uploaded avatar
 
+    let audioUnlocked = false;
 
-let audioUnlocked = false;
-
-function unlockAudio() {
-  const joinSound = document.getElementById('userJoinSound');
-  if (joinSound && !audioUnlocked) {
-    joinSound.play().catch(() => {}); // try to play
-    joinSound.pause();                 // immediately pause
-    joinSound.currentTime = 0;        // reset
-    audioUnlocked = true;
-  }
-}
-
-// Unlock on first click or keypress
-document.addEventListener('click', unlockAudio, { once: true });
-document.addEventListener('keypress', unlockAudio, { once: true });
-
-
-
-
-  const socket = io();
-  const username = "<%= username %>";
-  const room = "<%= room %>";
-  const myUsernameBadge = document.getElementById('myUsernameBadge');
-  myUsernameBadge.textContent = `${username} (you)`;
-
-
-  const chatBody = document.getElementById('chatBody');
-  const input = document.getElementById('msgInput');
-  const sendBtn = document.getElementById('sendBtn');
-  const usersOnline = document.getElementById('usersOnline');
-
-  // Join the room
-  socket.emit('joinRoom', { room, username });
-
-  // Receive messages (user/system)
-  socket.on('message', data => {
-    const msgRow = document.createElement('div');
-    if (data.username === 'System') {
-      msgRow.className = 'system-msg';
-      msgRow.innerText = `⚙️_SYSTEM_:  ${data.message}`;
-
-       // 👇 Play sound if someone joined/rejoined
-   if (data.username === 'System' && (data.message.includes('joined the room') || data.message.includes('rejoined the room'))) {
-    const joinSound = document.getElementById('userJoinSound');
-    if (joinSound && audioUnlocked) joinSound.play();
-  }
-    } else {
-      msgRow.className = data.username === username ? 'message-row outgoing' : 'message-row incoming';
-      msgRow.innerHTML = `
-  <div class="msg-content">
-    ${data.username === username ? '' : `
-      <img class="avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(data.username)}" alt="avatar">
-    `}
-    <div class="bubble">
-      <div class="username">${data.username}</div>
-      <div class="message">${data.message}</div>
-      <span class="timestamp">${new Date(data.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-    </div>
-    ${data.username === username ? `
-      <img class="avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(data.username)}" alt="avatar">
-    ` : ''}
-  </div>
-`;
-
+    // Unlock audio on first user interaction
+    function unlockAudio() {
+      const joinSound = document.getElementById('userJoinSound');
+      if (joinSound && !audioUnlocked) {
+        joinSound.play().catch(() => {});
+        joinSound.pause();
+        joinSound.currentTime = 0;
+        audioUnlocked = true;
+      }
     }
-    chatBody.appendChild(msgRow);
-    chatBody.scrollTop = chatBody.scrollHeight;
-  });
 
-  // Send message
-  sendBtn.addEventListener('click', () => {
-    const text = input.value.trim();
-    if (text) {
-      socket.emit('message', { username, message: text, time: new Date().toISOString() });
-      input.value = '';
-    }
-  });
-  input.addEventListener('keypress', e => { if (e.key === 'Enter') sendBtn.click(); });
+    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('keypress', unlockAudio, { once: true });
 
-  // Online users count
-  socket.on('usersOnline', count => {
-    usersOnline.textContent = count + " users online";
-  });
+    const socket = io();
+    const username = "<%= username %>";
+    const room = "<%= room %>";
+    const chatBody = document.getElementById('chatBody');
+    const input = document.getElementById('msgInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const usersOnline = document.getElementById('usersOnline');
 
-  // Username taken alert
-  socket.on('usernameTaken', msg => {
-    alert(msg);
-    window.location.href = "/random-chatRoom";
-  });
-</script>
+    const tooltipSpan = document.querySelector('#myUsernameBadge .tooltip');
+tooltipSpan.textContent = `${username} (you)`; // ✅ keeps the icon intact
 
-<script>
-  const themeToggleBtn = document.querySelector('.theme-toggle');
-  const body = document.body;
-  const icon = themeToggleBtn.querySelector("i");
 
-  // Load saved theme
-  if (localStorage.getItem('theme') === 'light') {
-    body.classList.remove('dark');
-    icon.classList.replace("fa-sun", "fa-moon");
-  } else {
-    body.classList.add('dark');
-    icon.classList.replace("fa-moon", "fa-sun");
-  }
+    // Join the room
+    socket.emit('joinRoom', { room, username });
 
-  // Toggle theme
-  themeToggleBtn.addEventListener('click', () => {
-    body.classList.toggle('dark');
-    const isDark = body.classList.contains('dark');
+    // Receive messages
+    socket.on('message', data => {
+      const msgRow = document.createElement('div');
 
-    if (isDark) {
-      icon.classList.replace("fa-moon", "fa-sun");
-    } else {
+      if (data.username === 'System') {
+        msgRow.className = 'system-msg';
+        msgRow.innerText = `⚙️_SYSTEM_:  ${data.message}`;
+
+        // Play join/rejoin sound
+        if (data.message.includes('joined the room') || data.message.includes('rejoined the room')) {
+          const joinSound = document.getElementById('userJoinSound');
+          if (joinSound && audioUnlocked) joinSound.play();
+        }
+
+      } else {
+        msgRow.className = data.username === username ? 'message-row outgoing' : 'message-row incoming';
+        msgRow.innerHTML = `
+          <div class="msg-content">
+            ${data.username === username ? '' : `
+              <img class="avatar" src="${data.avatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(data.username)}`}" alt="avatar">
+            `}
+            <div class="bubble">
+              <div class="username">${data.username}</div>
+              <div class="message">${data.message}</div>
+              <span class="timestamp">${new Date(data.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+            </div>
+            ${data.username === username ? `
+              <img class="avatar" src="${myAvatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(data.username)}`}" alt="avatar">
+            ` : ''}
+          </div>
+        `;
+      }
+
+      chatBody.appendChild(msgRow);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    });
+
+    // Send message
+    sendBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (text) {
+        socket.emit('message', { username, message: text, time: new Date().toISOString(), avatar: myAvatar || null });
+        input.value = '';
+      }
+    });
+
+    input.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendBtn.click();
+    });
+
+    // Update online users
+    socket.on('usersOnline', count => {
+      usersOnline.textContent = count + " users online";
+    });
+
+    // Username taken alert
+    socket.on('usernameTaken', msg => {
+      alert(msg);
+      window.location.href = "/random-chatRoom";
+    });
+  </script>
+
+  <!-- Theme toggle -->
+  <script>
+    const themeToggleBtn = document.querySelector('.theme-toggle');
+    const body = document.body;
+    const icon = themeToggleBtn.querySelector("i");
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'light') {
+      body.classList.remove('dark');
       icon.classList.replace("fa-sun", "fa-moon");
+    } else {
+      body.classList.add('dark');
+      icon.classList.replace("fa-moon", "fa-sun");
     }
 
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  });
-</script>
+    // Toggle theme
+    themeToggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      const isDark = body.classList.contains('dark');
+
+      if (isDark) {
+        icon.classList.replace("fa-moon", "fa-sun");
+      } else {
+        icon.classList.replace("fa-sun", "fa-moon");
+      }
+
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  </script>
 
 
-
+<!-- Hot Topic suggestions -->
 <script>
   const topicBox = document.querySelector(".realTopic_suggestion");
-  const NEWS_API_KEY = ""; 
 
+  // API keys (replace with your actual keys)
+  const NEWS_API_KEY = ""; // For news-related topics
+  const JOBS_API_KEY = ""; // For job-related topics
+  const TRIVIA_API_KEY = ""; // For general knowledge trivia
+
+  // Fallback topics including emotions, life struggles, jobs, news, and facts
   const fallbackTopics = [
-    "AI is reshaping jobs worldwide",
-    "SpaceX plans new Mars mission",
-    "Climate change impacts rising seas",
-    "Global stock markets see volatility",
-    "Breakthrough in cancer research",
-    "World Cup fever is everywhere",
-    "Tech giants face new regulations"
+    "Love stories that changed lives",
+    "Ghost sightings and paranormal experiences",
+    "Real-life struggles and triumphs",
+    "Hate and social conflict stories",
+    "Job opportunities and career updates",
+    "Latest world news headlines",
+    "Tech innovations shaping our world",
+    "Health and wellness breakthroughs",
+    "Relationship advice and challenges"
   ];
 
+  // Display topic in the box
   function showTopic(text) {
-    topicBox.innerHTML = `💡 <span>Hot Topic:</span> <span class="topic-link" style="cursor:pointer; color:#1e90ff; text-decoration:underline">${text}</span>`;
+      topicBox.innerHTML = `💡 <span>Hot Topic:</span> <span class="topic-link">${text}</span>`;
 
-    // 👉 Make it clickable → auto-insert into chat input
+
     const link = topicBox.querySelector(".topic-link");
     if (link) {
       link.addEventListener("click", () => {
@@ -198,50 +221,59 @@ document.addEventListener('keypress', unlockAudio, { once: true });
     }
   }
 
+  // Random fallback topic
   function showFallbackTopic() {
     const topic = fallbackTopics[Math.floor(Math.random() * fallbackTopics.length)];
     showTopic(topic);
   }
 
+  // Fetch topics from APIs
   async function fetchTopic() {
     try {
+      // Fetch news-related topics
       if (NEWS_API_KEY) {
-        // ✅ Fetch from GNews
-        const res = await fetch(`https://gnews.io/api/v4/top-headlines?lang=en&max=10&apikey=${NEWS_API_KEY}`);
+        const res = await fetch(`https://newsapi.org/v2/top-headlines?category=general&apiKey=${NEWS_API_KEY}`);
         const data = await res.json();
         if (data.articles && data.articles.length > 0) {
           const randomArticle = data.articles[Math.floor(Math.random() * data.articles.length)];
           return showTopic(randomArticle.title);
         }
-      } else {
-        // ✅ Fallback to Google News RSS (no key required)
-        const rssUrl = "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en";
-        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`);
+      }
+
+      // Fetch job-related topics
+      if (JOBS_API_KEY) {
+        const res = await fetch(`https://api.example.com/jobs?apiKey=${JOBS_API_KEY}`);
         const data = await res.json();
-
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(data.contents, "text/xml");
-        const items = xml.querySelectorAll("item title");
-
-        if (items.length > 0) {
-          const randomItem = items[Math.floor(Math.random() * items.length)].textContent;
-          return showTopic(randomItem);
+        if (data.jobs && data.jobs.length > 0) {
+          const randomJob = data.jobs[Math.floor(Math.random() * data.jobs.length)];
+          return showTopic(`Job Opportunity: ${randomJob.title} at ${randomJob.company}`);
         }
       }
+
+      // Fetch general knowledge trivia
+      if (TRIVIA_API_KEY) {
+        const res = await fetch(`https://api.example.com/trivia?apiKey=${TRIVIA_API_KEY}`);
+        const data = await res.json();
+        if (data.questions && data.questions.length > 0) {
+          const randomTrivia = data.questions[Math.floor(Math.random() * data.questions.length)];
+          return showTopic(`Trivia: ${randomTrivia.question}`);
+        }
+      }
+
     } catch (err) {
       console.error("Error fetching topic:", err);
     }
 
-    // 🚨 If everything fails
+    // If API fails, show fallback
     showFallbackTopic();
   }
 
-  // Show immediately
+  // Show topic immediately
   fetchTopic();
-
   // Refresh every 10 minutes
-  setInterval(fetchTopic, 600000);
+  setInterval(fetchTopic, 120000);
 </script>
+
 
 
 </body>

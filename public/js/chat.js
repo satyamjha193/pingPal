@@ -661,3 +661,119 @@ document.querySelectorAll(".chat-options-panel .option-btn").forEach(btn => {
     }
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+// ==========================
+// Live Score & Leaderboard
+// ==========================
+
+// DOM elements
+const userScoreEl = document.getElementById('userScore');
+const highScoreEl = document.getElementById('highScore');
+const highScoreUserEl = document.getElementById('highScoreUser');
+const highScoreBadge = document.getElementById('highScoreBadge');
+const leaderboardEl = document.getElementById('leaderboard');
+
+let userScore = 0;
+
+// Function to increment score and update UI
+async function incrementScore() {
+  try {
+    const res = await fetch('/increment-score', {
+      method: 'POST',
+      credentials: 'include', // 👈 send session cookies
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      userScore = data.yourScore;
+      if (userScoreEl) userScoreEl.textContent = userScore;
+
+      if (highScoreEl) highScoreEl.textContent = data.highScore;
+      if (highScoreUserEl) highScoreUserEl.textContent = data.highScoreUser;
+
+      if (highScoreBadge)
+        highScoreBadge.style.display = data.isHighScore ? 'block' : 'none';
+    }
+  } catch (err) {
+    console.error('Score increment failed:', err);
+  }
+}
+
+// ==========================
+// Leaderboard Update
+// ==========================
+async function updateLeaderboard() {
+  if (!leaderboardEl) return; // prevent errors if element missing
+
+  try {
+    const res = await fetch('/leaderboard', {
+      method: 'GET',
+      credentials: 'include', // 👈 send session cookies
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      leaderboardEl.innerHTML = '';
+      data.leaderboard.forEach((user, idx) => {
+        const li = document.createElement('li');
+        li.textContent = `${idx + 1}. ${user.username}  ~ ${user.score}`;
+        leaderboardEl.appendChild(li);
+      });
+    }
+  } catch (err) {
+    console.error('Failed to fetch leaderboard:', err);
+  }
+}
+
+// ==========================
+// Initialize Score System
+// ==========================
+async function initScoreSystem() {
+  // Increment immediately on page load
+  await incrementScore();
+  await updateLeaderboard();
+
+  // Increment score every minute (+5)
+  setInterval(async () => {
+    await incrementScore();
+    await updateLeaderboard();
+  }, 60000); // 60,000ms = 1 minute
+}
+
+// Start the system
+initScoreSystem();
+
+
+
+
+
+// for search pingpal users overlay
+
+let lastScrollTop = 0;
+const header = document.querySelector('.search-header');
+
+document.querySelector('.search-overlay').addEventListener('scroll', function() {
+  const scrollTop = this.scrollTop;
+
+  if (scrollTop > lastScrollTop && scrollTop > 50) {
+    // scrolling down → hide header
+    header.classList.add('hide');
+  } else {
+    // scrolling up → show header
+    header.classList.remove('hide');
+  }
+
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // avoid negative scroll
+});

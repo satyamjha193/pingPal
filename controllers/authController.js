@@ -162,28 +162,6 @@ transporter.verify(function (error, success) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Login controller
 exports.login = async (req, res) => {
   const { username, password } = req.body;

@@ -177,12 +177,11 @@
           : Math.floor(Math.random() * 100000) + 1 %>
   </p>
 
-  <p>
-    <span>Score:</span>
-    <%= user.score != null 
-          ? user.score 
-          : Math.floor(Math.random() * 1000000) + 1 %>
-  </p>
+<p>Your Score: <span id="userScore">0</span></p>
+
+<div id="highScoreBadge" style="display:none; color: gold; font-weight: bold;">🏆 You have the high score!</div>
+
+
 
   <p>
     <span>Status:</span> 
@@ -395,7 +394,15 @@
   <h2>PingPal Users</h2>
 </div>
 
-  <br>
+
+<div class="leaderboard-container">
+  <h2>Top High Scorers of PingPal</h2>
+  <ul id="leaderboard">
+    <!-- Dynamic leaderboard items here -->
+  </ul>
+</div>
+
+
 
   <!-- Two column layout -->
   <div class="users-columns">
@@ -444,7 +451,7 @@
       <div class="user-info">
         <% if (user.avatar) { %>
           <div class="avatar-search-section">
-            <img 
+            <img id="userdp-avatar" title="View Profile"
               src="<%= user.avatar %>" 
               alt="<%= user.username %>" 
               class="avatar-img open-user-profile" 
@@ -473,6 +480,7 @@
 
 </div>
   </div>
+
 </div>
 
 
@@ -517,6 +525,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/chat.js"></script>
   <script src="/js/gesture.js"></script>
+ 
   
 
 </body>

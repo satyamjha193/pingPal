@@ -113,6 +113,37 @@
   max-width: 600px;
 }
 
+.hero-text button {
+  padding: 12px 30px;
+  background-color: #4a154b;  /* Dark purple button */
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-text button a {
+  color: inherit;            /* inherit button color */
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* Hover effect */
+.hero-text button:hover {
+  background-color: #b085ff; /* lighter purple on hover */
+  color: #0a0a0a;            /* text changes to dark */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(176, 133, 255, 0.4);
+}
+
+/* Optional: active press effect */
+.hero-text button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(176, 133, 255, 0.3);
+}
+
 
     .hero-text h1 {
       font-size: 3rem;
@@ -178,11 +209,52 @@
       .hero-text p {
         font-size: 1rem;
       }
-
-      .hero-image img {
-        margin-top: 30px;
-      }
     }
+
+    .hero-image {
+  flex: 1;
+  text-align: center;
+  max-width: 500px;       /* Prevent it from being too large on wide screens */
+  margin: 0 auto;          /* Center horizontally */
+}
+
+.hero-image img {
+  width: 100%;             /* Make image scale with container */
+  height: auto;            /* Preserve aspect ratio */
+  max-width: 500px;        /* Maximum size on large screens */
+  border-radius: 16px;     /* Optional: smooth edges */
+  animation: float 5s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .hero-image {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;   /* stack image and text vertically */
+    padding: 40px 6%;
+  }
+
+  .hero-image {
+    max-width: 80%;           /* image takes up most of the width on smaller screens */
+    margin-top: 30px;
+  }
+
+  .hero-image img {
+    max-width: 100%;          /* scale image fully within container */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-image {
+    max-width: 90%;           /* slightly larger on very small screens */
+  }
+}
+
   </style>
 </head>
 <body>
@@ -207,20 +279,38 @@
         <h3>🤖 AI Suggestions</h3>
         <p>Get intelligent text suggestions in real-time, tailored to your conversation.</p>
       </div>
+       <div class="feature-card">
+    <h3>🏆 Live Scoring & Leaderboard</h3>
+    <p>Earn points while chatting! See your rank among top PingPal users in real-time, and get badges for high scores.</p>
+  </div>
     </div>
 
   </section>
 
-   <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-text">
-      <h1>About PingPal</h1>
-      <p>
-        PingPal connects people through seamless, real-time communication. Whether it's friends, teams, or communities, our platform is designed to make chatting smart, fast, and fun.
-      </p>
-      <button><a href="/login" style="color: white;text-decoration:none;">Explore Features</a></button>
-    </div>
-  </section>
+   
+  <!-- Hero / About Section -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>About PingPal</h1>
+    <p>
+      PingPal connects people through seamless, real-time communication. Whether it's friends, teams, or communities, our platform is designed to make chatting smart, fast, and fun. 
+    </p>
+    <p>
+      With our end-to-end encryption, your conversations are always private. Features like Whisper Mode, AI suggestions, and Live Scoring make every interaction engaging and secure. 
+      Track your points, compete with others, and earn badges for your achievements — all while chatting safely.
+    </p>
+    <p>
+      Join PingPal today and experience a secure, intelligent, and interactive way to connect with anyone, anywhere.
+    </p>
+    <button>
+      <a href="/login">Explore Features</a>
+    </button>
+  </div>
+  <div class="hero-image">
+    <img src="/images/Logo.png" alt="PingPal Illustration">
+  </div>
+</section>
+
 
 </body>
 </html>

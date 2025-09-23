@@ -30,6 +30,12 @@ html, body {
       --profile-header-bg: #4a154b;
       --text-color:rgb(6, 6, 6);
       --system-message:#434343;
+       --hot-topic-bg: rgba(255, 255, 255, 0.8);
+       --hot-topic-color: #333;
+       --link:rgb(62, 183, 204);
+        --user-badge-bg: rgba(0, 0, 0, 0.1); /* light translucent background */
+  --user-icon-color: #333;            /* dark icon color */
+  --tooltip-bg: rgba(0, 0, 0, 0.8);   /* tooltip background */
     }
 
     .dark {
@@ -50,6 +56,12 @@ html, body {
       --user-profile-chats-card: rgba(117, 31, 117, 0.2);
       --text-color:rgb(255, 254, 254);
       --system-message:#211f1e;
+      --hot-topic-bg: rgba(0, 0, 0, 0.6);
+      --hot-topic-color: #fff;
+      --link:rgb(59, 210, 221);
+       --user-badge-bg: rgba(255, 255, 255, 0.1); /* light translucent background for contrast */
+  --user-icon-color: #fff;                    /* white icon in dark mode */
+  --tooltip-bg: rgba(0, 0, 0, 0.8);          /* tooltip remains dark */
     }
 
     body {
@@ -89,6 +101,11 @@ html, body {
       background: transparent;
       color: var(--back-btn);
       font-size: 18px;
+    }
+    .icons-container{
+      display: flex;
+      justify-content: center;
+      gap: 20px;
     }
 
     /* Chat body */
@@ -187,10 +204,10 @@ html, body {
 
     .avatar {
        width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-      }
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
       
 .bubble {
   display: flex;
@@ -222,15 +239,15 @@ html, body {
       font-size: 18px;
     }
     @media (max-width: 768px) {
-          .chat-footer{
-             position: fixed;        /* Fix it to bottom */
-              bottom: env(safe-area-inset-bottom, 0); /* Safe area for iPhones/Android */
-              width: 100%;
-          }
-           .chat-body{
-          padding-bottom: 150px;
-           }
+      .chat-footer{
+          position: fixed;        /* Fix it to bottom */
+          bottom: env(safe-area-inset-bottom, 0); /* Safe area for iPhones/Android */
+          width: 100%;
+      }
+        .chat-body{
+      padding-bottom: 150px;
         }
+    }
 
 
 .realTopic_suggestion {
@@ -238,8 +255,8 @@ html, body {
   margin: 10px auto;
   padding: 10px 14px;
   max-width: 90%;
-  background: rgba(0,0,0,0.6);
-  color: #fff;
+  background: var(--hot-topic-bg);
+  color: var(--hot-topic-color);
   border-radius: 12px;
   font-size: 14px;
   text-align: center;
@@ -247,19 +264,71 @@ html, body {
   animation: fadeIn 0.5s ease-in-out;
   z-index: 5;
 }
+
+/* Hot Topic box */
 .realTopic_suggestion span {
-  font-weight: bold;
-  color: #ffffff;
+  font-weight: 600;
+}
+
+.realTopic_suggestion .topic-link {
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--link);
+}
+
+/* Hot Topic label */
+.realTopic_suggestion span:first-child {
+  color: var(--hot-topic-label);
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.username-badge{
-  font-weight: 100;
-  color: var(--text-color);
-  padding-right: 30px;
+
+
+/* Username badge container */
+.username-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--user-badge-bg);
+  color: var(--user-icon-color);
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 18px;
 }
+
+/* Tooltip text */
+.username-badge .tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  background-color: var(--tooltip-bg);
+  color: #fff;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.85rem;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Show tooltip on hover */
+.username-badge:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
 .room-number{
   padding-right: 70px;
 }

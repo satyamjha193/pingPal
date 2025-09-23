@@ -52,20 +52,6 @@ router.get('/chat', ensureAuth, async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // GET /chat/:chatId - open selected chat
 // =======================
 
@@ -184,28 +170,110 @@ router.get('/random-chatRoom', (req, res) => {
   res.render('randomChatroom', { rooms: roomsInfo, username: req.session.user.username });
 });
 
+
+
+
 // Room route
-router.get(['/room/:id', '/room'], (req, res) => {
+router.get(['/room/:id', '/room'], async (req, res) => {
   if (!req.session.user) {
-    // session expired → redirect to landing
     return res.redirect('/random-chatRoom');
   }
 
   let roomNumber = parseInt(req.params.id, 10) || req.session.user.room;
-
   if (![1, 2, 3].includes(roomNumber)) {
     return res.redirect('/random-chatRoom');
   }
 
-  req.session.user.room = roomNumber;  // store chosen room
+  // ❌ Prevent more than 10 users in a room
+  if (roomsInfo[roomNumber].size >= 10 && !roomsInfo[roomNumber].has(req.session.user.username)) {
+    // if room is full and current user is not already inside
+    return res.redirect('/random-chatRoom'); 
+  }
 
-  // Track users for stats
+  req.session.user.room = roomNumber;
   roomsInfo[roomNumber].add(req.session.user.username);
+
+  // if logged-in user exists in DB, fetch their avatar
+  let userAvatar = null;
+  if (req.session.user._id) {
+    const dbUser = await User.findById(req.session.user._id).lean();
+    if (dbUser && dbUser.avatar) {
+      userAvatar = dbUser.avatar;
+    }
+  }
 
   res.render('chatRoom', {
     room: roomNumber,
-    username: req.session.user.username
+    username: req.session.user.username,
+    avatar: userAvatar
   });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Increment score based on time spent
+
+router.post('/increment-score', ensureAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id; // ✅ use 'id' as set in middleware
+    if (!userId) return res.status(401).json({ success: false, message: 'Not authenticated' });
+
+    const increment = 5; // +5 per minute
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $inc: { score: increment } },
+      { new: true }
+    );
+
+    // Find highest score across all users
+    const topUser = await User.findOne().sort({ score: -1 }).lean();
+    const isHighScore = updatedUser.score >= (topUser?.score || 0);
+
+    res.json({
+      success: true,
+      yourScore: updatedUser.score,
+      highScore: topUser?.score || 0,
+      highScoreUser: topUser?.username || 'N/A',
+      isHighScore
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+
+
+
+router.get('/leaderboard', ensureAuth, async (req, res) => {
+  try {
+    const topUsers = await User.find()
+      .sort({ score: -1 })
+      .limit(10)
+      .select('username score')
+      .lean();
+
+    res.json({ success: true, leaderboard: topUsers });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 

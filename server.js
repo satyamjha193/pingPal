@@ -17,10 +17,16 @@ const io = socketIO(server);
 
 
 
+<<<<<<< HEAD
 // MongoDB
 mongoose.connect(process.env.MONGO_URI, {})
 .then(() => console.log('✅ MongoDB connected'));
 
+=======
+//MongoDB
+mongoose.connect(process.env.MONGO_URI, {})
+.then(() => console.log('✅ MongoDB connected'));
+>>>>>>> 54ba6bb (Updated UI: leaderboard, scoring system, search overlay, sticky header, and new randomChatroom.js)
 
 // Session
 app.use(session({
@@ -69,12 +75,13 @@ app.use((req, res, next) => {
 app.use('/chat', validateSession, ensureAuth);
 
 
-// Socket.IO logic
+// Socket.IO logic     -----Initialize sockets
 const { setupSocket } = require('./sockets/chatSockets');
-const {RandomchatSockets} =  require("./sockets/randomchatSockets")
-// Initialize sockets
+const {RandomchatSockets,broadcastRoomStatus} =  require("./sockets/randomchatSockets")
+
 setupSocket(io);
 RandomchatSockets(io);
+broadcastRoomStatus(io);
 
 
 // Start server

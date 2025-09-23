@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
     default: "Hey there! I am using PingPal 🚀",
     maxlength: 250, // optional safety limit
   },
+  score: { type: Number, default: 0 } , // 👈 added field
    blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }] // 👈 new
 }, { timestamps: true });
 
