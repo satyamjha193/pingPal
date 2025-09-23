@@ -17,16 +17,9 @@ const io = socketIO(server);
 
 
 
-<<<<<<< HEAD
-// MongoDB
-mongoose.connect(process.env.MONGO_URI, {})
-.then(() => console.log('✅ MongoDB connected'));
-
-=======
 //MongoDB
 mongoose.connect(process.env.MONGO_URI, {})
 .then(() => console.log('✅ MongoDB connected'));
->>>>>>> 54ba6bb (Updated UI: leaderboard, scoring system, search overlay, sticky header, and new randomChatroom.js)
 
 // Session
 app.use(session({
