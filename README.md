@@ -16,6 +16,7 @@ It’s designed to help users **meet new people**, **share ideas**, and even **m
   - Dynamic avatars (random boy/girl assignment)
   - Display picture (DP), username, and live messaging
   - Message pop-ups & chat hold support
+  - Earn points while using app! See your rank among top PingPal users in real-time, and get badges for high scores.
 
 - 🔒 **Private Messaging**
   - Secure one-to-one chat
