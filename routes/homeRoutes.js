@@ -19,7 +19,6 @@ router.get('/features', (req, res) => res.render('feature'));
 
 
 
-
 // GET /chat - default page
 router.get('/chat', ensureAuth, async (req, res) => {
   try {

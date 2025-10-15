@@ -17,25 +17,43 @@ const io = socketIO(server);
 
 
 
+
 //MongoDB
 mongoose.connect(process.env.MONGO_URI, {})
 .then(() => console.log('✅ MongoDB connected'));
 
 // Session
+// ----- MongoDB Connection -----
+mongoose.connect(process.env.MONGO_URI, {
+  ssl: true,
+  tlsCAFile: undefined, // optional if needed
+  tlsAllowInvalidCertificates: false,
+  serverSelectionTimeoutMS: 5000, // short timeout to fail fast
+})
+.then(() => console.log('✅ MongoDB connected'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
+
+
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
+    secret: process.env.SESSION_SECRET,  // keep this secure!
+    resave: false,                        // don't save if unmodified
+    saveUninitialized: false,             // don't save empty sessions
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI, // MongoDB connection for sessions
+        collectionName: 'sessions',      // optional: defaults to 'sessions'
+        ttl: 24 * 60 * 60                // session expiration in seconds (1 day)
+    }),
+    cookie: { 
+        maxAge: 1000 * 60 * 60 * 24,     // 1 day in milliseconds
+        httpOnly: true,                  // can't access cookie via client-side JS
+        secure: process.env.NODE_ENV === 'production', // only HTTPS in prod
+        sameSite: 'lax'                  // protects against CSRF
+    }
 }));
 
 
-// app.use(session({
-//   secret: process.env.SESSION_SECRET,
-//   resave: false,
-//   saveUninitialized: false
-// }));
+
+
 
 
 
@@ -77,8 +95,9 @@ RandomchatSockets(io);
 broadcastRoomStatus(io);
 
 
+
 // Start server
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
