@@ -94,6 +94,28 @@ setupSocket(io);
 RandomchatSockets(io);
 broadcastRoomStatus(io);
 
+// ------------------- Your existing code -------------------
+// ... all your middlewares, routes, and Socket.IO setup
+
+// TEMP: Safe MongoDB connection test
+app.get('/test-db', async (req, res) => {
+  try {
+    if (mongoose.connection.readyState === 1) { // 1 = connected
+      const collections = await mongoose.connection.db.listCollections().toArray();
+      res.send(`✅ MongoDB is connected. Collections: ${collections.map(c => c.name).join(', ')}`);
+    } else {
+      res.status(500).send('❌ MongoDB is not connected. Current state: ' + mongoose.connection.readyState);
+    }
+  } catch (err) {
+    res.status(500).send('MongoDB connection failed: ' + err.message);
+  }
+});
+
+// ------------------- Start server -------------------
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
 
 
 // Start server
