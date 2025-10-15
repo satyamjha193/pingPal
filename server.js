@@ -90,12 +90,8 @@ app.get('/test-db', async (req, res) => {
 });
 
 // ----- Start Server -----
-const PORT = process.env.PORT;
-if (!PORT) {
-    console.error('❌ PORT is not defined. Render sets this automatically.');
-    process.exit(1);
-}
+const PORT = process.env.PORT || 3000; // fallback for local dev
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
