@@ -16,29 +16,29 @@ const io = socketIO(server);
 
 // ----- MongoDB Connection -----
 mongoose.connect(process.env.MONGO_URI, {
-    ssl: true,
-    tlsAllowInvalidCertificates: false,
-    serverSelectionTimeoutMS: 5000, // fail fast if unreachable
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000 // fail fast if DB unreachable
 })
 .then(() => console.log('✅ MongoDB connected'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// ----- Express Session Setup -----
+// ----- Express Session -----
 app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URI,
-        collectionName: 'sessions',
-        ttl: 24 * 60 * 60 // 1 day
-    }),
-    cookie: { 
-        maxAge: 1000 * 60 * 60 * 24,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
-    }
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
 }));
 
 // ----- Middlewares -----
@@ -53,45 +53,40 @@ app.set('views', path.join(__dirname, 'views'));
 // ----- Routes -----
 const homeRoutes = require('./routes/homeRoutes');
 const authRoute = require('./routes/authRoutes');
-
 app.use('/', homeRoutes);
 app.use('/auth', authRoute);
 
-// ----- Flash Messages Middleware -----
+// ----- Flash middleware -----
 app.use((req, res, next) => {
-    res.locals.success_msg = req.flash("success_msg");
-    res.locals.error_msg = req.flash("error_msg");
-    next();
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  next();
 });
-
-// Protect chat route
 app.use('/chat', validateSession, ensureAuth);
 
-// ----- Socket.IO Setup -----
+// ----- Socket.IO -----
 const { setupSocket } = require('./sockets/chatSockets');
 const { RandomchatSockets, broadcastRoomStatus } = require("./sockets/randomchatSockets");
-
 setupSocket(io);
 RandomchatSockets(io);
 broadcastRoomStatus(io);
 
-// ----- TEMP: MongoDB Connection Test -----
+// ----- TEMP: MongoDB test route -----
 app.get('/test-db', async (req, res) => {
-    try {
-        if (mongoose.connection.readyState === 1) {
-            const collections = await mongoose.connection.db.listCollections().toArray();
-            res.send(`✅ MongoDB is connected. Collections: ${collections.map(c => c.name).join(', ')}`);
-        } else {
-            res.status(500).send('❌ MongoDB is not connected. Current state: ' + mongoose.connection.readyState);
-        }
-    } catch (err) {
-        res.status(500).send('MongoDB connection failed: ' + err.message);
+  try {
+    if (mongoose.connection.readyState === 1) {
+      const collections = await mongoose.connection.db.listCollections().toArray();
+      res.send(`✅ MongoDB is connected. Collections: ${collections.map(c => c.name).join(', ')}`);
+    } else {
+      res.status(500).send('❌ MongoDB is not connected. Current state: ' + mongoose.connection.readyState);
     }
+  } catch (err) {
+    res.status(500).send('MongoDB connection failed: ' + err.message);
+  }
 });
 
-// ----- Start Server -----
-const PORT = process.env.PORT || 3000; // fallback for local dev
-
+// ----- Start server -----
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
